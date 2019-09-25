@@ -1,0 +1,284 @@
+Lots to learn from W3D2's AA Questions bonus section. 
+Instructor's solution: model_base.rb
+1. Reflective programming
+2. Inflector methods for string, tableize
+3. Database class methods
+4. Interpolation instead of ?
+5. Usage of splat operator for unlimited arguments
+6. instance_variables instance method
+7. DRY - Don't repeat yourself
+SQL queries return arrays! -> Even if it's a single thing or nothing at all
+
+RoR(Ruby on Rails) -> web application framework written in Ruby, released in 2004.
+
+MVC - Model-view-controller design pattern that divides an application into 
+3 basic parts.
+1. Model concerned with retrieval of information from storage/logic done to said info 
+2. View is concerned with presenting information 
+3. Controller constructs server's HTTP response and sends commands to model 
+to fetch/update information, and to view to display information. Acts 
+as interface between model and view
+
+CoC - convention over configuration. Only need to be specific about doing 
+something unconventional. Circumvents writing boilerplate configuration
+1. cats database table -> Cat model/class -> CatsController
+
+REST -> Representational State Transfer, architectural style for web services. 
+RESTful web service -> access web resources using standard operations aka 
+HTTP's GET/POST/PATCH/DELETE. 
+Ex. GET request to resource with ID will return data on the item.
+RESTful web services are stateless-- each request/response cycle is independent
+of any other and information will not be retained. Data cached on client side.
+Rails defaults to RESTful API using resources method, automatically
+generates routes by linking HTTP verbs and URLs to controller actions 
+
+ActiveRecord -> ORM, represents data from database as Ruby objects. Contains 
+methods to implement basic CRUD (create, read, update, delete)
+
+ActionController -> handles controller logic, access to various cookies, 
+provides protection against CSRF attcks by checking authenticity tokens
+
+ActionView -> responsible for rendering views, templates can take several forms.
+ERB aka embedded ruby, aka HTML with Ruby. Builder file: instead of rendering 
+HTML, a view could render XML or JSON
+
+Rake -> utility tool packaged with Rails that handles task management, 
+scripting tool for Rails
+
+Rack -> middleware tht sits between Rails router and the web server, 
+receiving HTTP requests from the server and generating responses using 
+information from the router.Rack ensures every server can interface 
+with eevery framework.
+
+WEBrick -> HTTP server that's standard with Rails 4, Rails 5 ships with Puma.
+WEBrick is single-threaded, aka 1 request at a time. Puma is fast, multi-threaded, 
+and handles requests concurrently.
+
+Sinatra -> smaller/simpler than Rails 
+
+Node.js (Javascript) -> part of MEAN stack (Mongo.db, Express.js, Angular.js, 
+and Node.js) to create a full-stack app. Node is a runtime environment, not a 
+framework. (Can run JS code, has packages called modules, very flexible)
+
+Django (Python) -> MVC framework, explicit > implicit
+
+Spring MVC (Java) -> Can be very slow, has to be completely restarted, 
+lack of scalability, any kind of I/O holds up a thread and slows down the app 
+
+Play! (Scala) -> supports hot reload unlike Spring, more built-in functionality, 
+and is much more responsive. Lack of plug-ins, but it's a very fast language.
+
+ASP.NET MVC (.NET) -> Microsoft, C# supported, suited for Windows development.
+Preference: Ruby vs C# or other .NET languages?
+
+Laravel(PHP) -> most popular server-side language in use is PHP, developed 
+w/ modern architecture in mind. Support for user authentication, recurring 
+billing services, scheduling periodically executed tasks, etc
+--------------------------------------
+
+rails new project_name -d=database_name
+
+Gem file! -> Version included, gems installed in certain environments...
+3 environments: Development, test, and production
+bundle install to install said gems
+pry-rails is useful!
+
+Database migrations -> a migration is a file containing Ruby code that 
+describes a set of changes applied to the db
+
+bundle exec rails db:create -> Create the database defined in config
+https://www.tutorialspoint.com/ruby-on-rails/rails-migrations.htm
+
+bundle exec rails generate migration <name> -> Makes migration
+createTable -> auto-loads boilerplate code
+
+create_table :table_name do |t|
+  t.type "etc", 
+end
+
+bundle exec rails db:migrate -> Migrates!
+bundle exec rails db:migrate:status -> Tells what has been migrated
+
+How to change migrations?
+Just make another migration and add or remove a column! 
+
+bundle exec rails db:rollback will rollback the latest migration -> Do 
+not ever do this in production. If possible, do not EVER rollback to avoid 
+it becoming a habit
+
+ORM -> translate between SQL records and Ruby/etc objects
+
+In model, make a model class like for dogs table, Dog class, and inherit 
+from ApplicationRecord
+Get methods like .all, .last, .create(options), .destroy, .column_names, .new, .save, 
+getter/setter methods, .first, .find(id), find_by(options), destroy_all, where, etc.
+
+gem 'annotate' -> bundle exec annotate -> prints out schema for models
+Validations: 
+bundle exec rails console -> Kinda like pry but with everything loaded
+.save! will raise exception, while .save will just return false
+.errors.full_messages -> stores errors
+.valid? will ask if it's a valid instance
+custom validation -> make a method, and add 
+errors[:etc] << "Whatever" if it's an error
+Then validate :method
+
+belongs_to and has_many associations!
+
+has_many(:toys, {
+  primary_key: :id, 
+  foreign_key: :dog_id, 
+  class_name: :Toy
+})
+
+belongs_to(:dogs, {
+  primary_key: :id, 
+  foreign_key: :dog_id, 
+  class_name: :Dog
+})
+
+Curly braces and regular braces aren't needed -- implied.
+Also, typically, PK/FK/class name is typically implied too.
+Associations will create getter and setter methods!
+
+If a house has many dogs and a dog has many toys, how many toys does a house have?
+has_many :toys, 
+  through: :dogs, # (this is going to be a method or association name)
+  source: :toys # (This is also goign to be a method or assocation name)
+ 
+So basically 
+1. House will have a toys method 
+2. This toys method will call dogs, and dogs will call toys
+
+has_one :house, 
+  through: :dog,
+  source: :house
+
+With a has_one, there will be a LIMIT 1 added to the query.
+--------------------------------------------
+
+Validations are applied at model level 
+Constraints are applied at the database level (migrations)
+
+Typical constraints: NOT NULL, FOREIGN KEY, UNIQUE INDEX
+Use both constraints and validation if possible! Ie. NOT NULL + presence: true
+Validations happen when save/save! is called
+
+It's important to index columns that are heavily used for lookups in queries! 
+Otherwise, a O(n) time complexity per search will happen.
+Index = creates sorted data structure(balanced tree) w/ pointers to actual table, then 
+lookups can use binary search. Make sure to index the right things, 
+and on that note, FOREIGN KEYS are always a good choice because they're used 
+in both WHERE clauses and JOINS often.
+Use indices if look up on another table or search by that column
+
+In migrations: add_index(:table, :column, unique: true)
+Won't allow unique: true unless you have index! 
+Also, remember to add complementary model validation if you have database 
+unique constraint, meaning in model is uniqueness: true
+-----------------------------------------------------
+https://www.w3.org/TR/CSS21/propidx.html
+
+CSS inheritance: takes from nearest ancestor(aka parent container)
+
+CSS RESETS: Change defaults so you don't need to fight against them
+Think box-model: width, height, padding, margin, border
+
+margin: 0;
+border: 0;
+padding: 0;
+
+font: inherit;
+text-align: inherit;
+text-decoration: inherit;
+color: inherit;
+background: transparent;
+
+Box-model, font, and color/blackground!
+
+----------------------
+
+In models, you can pass in the object and it'll just be the object's id!
+
+Rails 5 vs Rails 4 
+1. in Rails 4 in models, class Cat < ActiveRecord::Base
+2. belongs_to associations are automatically validated in Rails 5
+3. allows belongs_to associations to be optional w/ optional: true, Rails 5
+4. Double errors on belongs_to associations if you validate it again, Rails 5
+5. through association ordering-- source last! Rails 5
+6. Use render :plain in Rails 5
+7. rails replaces rake, rails db:somecommand
+8. migrations are versioned in Rails 5
+9. shoulda-matchers and rails-controller-testing gems for Rails 5
+10. ActionCable, ActiveJob, api_mode, etc in Rails 5
+
+rails new -G means make a project w/o new repo
+
+Helpful development gems: annotate, better_errors, binding_of_caller, byebug,
+and pry-rails
+
+Switching from SQlite3 to Postgres is easy 
+1. delete .sqlite3 files in db 
+2. replace sqlite3 gem with pg gem 
+3. bundle install then edit config/database.yml to use postgresql
+4. change the default environment 
+5. create database and name development/test/production
+6. db:create, db:migrate, db:seed. remember bundle exec rails b4 all of those
+
+up, down, and change
+rails g migration migration_name
+boolean/date/datetime/float/integer/string/text/time
+
+create_table, add_column, remove_column, rename_column, rename_table, 
+add_index, change_column
+
+t.timestamps 
+
+rails db:migrate
+DO NOT EDIT OLD MIGRATIONS
+
+rails db:schema:load 
+
+Can not only run migrations, but run arbitrary code to fix database or 
+populate new fields. .each on a model class!
+
+https://guides.rubyonrails.org/command_line.html
+
+With where-- you can do a lot. Interpolation or ?, an array for IN, a range to 
+use BETWEEN, etc.
+
+rails console or rails c -> like pry but loads Ruby application for you and opens 
+a connection to the DB. In Rails, use reload! instead of load
+For SQL console--use rails dbconsole
+
+belongs_to and has_many -- returning single object vs array
+
+http://tutorials.jumpstartlab.com/topics/models/relationships.html
+Join table implementation! Logical enough. 
+
+N+1 query: Firing DB queries is expensive! Use has_many :through associations 
+instead!
+
+has_many :through does not care about the underlying associations-- it could 
+literally be anything! belongs_to, has_many, other has_many through, etc. 
+
+has_one is like has_many but LIMIT_1, so it returns object instead of arr
+
+Reflexive Associations: association back to the same table
+Two associations to the same class: can specify 
+
+If you don't specify, Rails uses logical defaults which aren't always what 
+you want!
+
+Common validators: presence, uniqueness (scope to limit uniqueness check), 
+format, length, numericality, inclusion
+a.Instead of checking for presence of FK, check presence of associated object!
+
+Common validation options: :allow_nil / :allow_blank, :message, :if, 
+:unless, etc 
+
+Primary keys are indexed by definition! Foreign keys and things that will 
+be searched for should be indexed
+
+With unique:true constraint, can also pass in array to have the uniqueness 
+of a combination fo values
