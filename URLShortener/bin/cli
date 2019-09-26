@@ -1,0 +1,74 @@
+#!/usr/bin/env ruby
+
+class UserInterface
+  def self.run 
+    email, input = nil, nil
+    user = email_prompt until user
+    input = input_prompt until ['1', '2'].include?(input)
+    UserInterface.new(user, input)
+  end
+
+  def self.email_prompt
+    puts "Please enter your email!"
+    input = gets.chomp
+    User.find_by(:email => input)
+  end 
+
+  def self.input_prompt
+    puts "Enter 1 to visit a shortened URL\nEnter 2 to create a new one"
+    gets.chomp
+  end
+
+  private_class_method :email_prompt, :input_prompt
+
+  def initialize(user, input)
+    @user = user
+    @input = input
+    action
+  end
+
+  private 
+
+  def action 
+    case @input 
+    when '1'
+      visit_shortened_url
+    when '2'
+      create_new_url
+    end
+  end
+
+  def visit_shortened_url
+    puts "Please enter the URL you wish to visit!"
+    url = gets.chomp
+    url_obj = ShortenedUrl.find_by(:short_url => url)
+    url_obj.nil? ? visit_error_message : visit_url(url_obj)
+  end 
+
+  def visit_error_message
+    puts "Invalid URL!"
+  end 
+
+  def visit_url(url)
+    puts "Opening #{url.short_url}!"
+    Launchy.open(url.long_url) do |exception|
+      next if exception.to_s.empty?
+      puts "Attempted to open #{url.long_url} and failed because #{exception}"
+    end
+    Visit.record_visit!(@user, url)
+  end
+
+  def create_new_url
+    long_url = nil
+    long_url = long_url_prompt until long_url
+    url = ShortenedUrl.shorten(@user, long_url)
+    visit_url(url)
+  end
+
+  def long_url_prompt
+    puts "Please enter the URL you wish to shorten!"
+    gets.chomp
+  end
+end
+
+UserInterface.run
