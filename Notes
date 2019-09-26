@@ -286,9 +286,11 @@ of a combination fo values
 1.rails new <name> -G --database=postgresql 
 2.Add in 4 useful gems, bundle install
 3.rails db:create
-4.Create migrations -> rails g migration <name> -> remember constraints/indexes  
+4.Create migrations -> rails g migration <name> -> remember constraints/indexes
+  a. Ex. CreateUsers -> users table
 5.Create models -> rails g model <name> (can add --migration=false) -> remember 
   validations and associations!
+  a. Ex. good_student.rb -> GoodStudent class
 6.bundle exec annotate
 7.rails console
 
@@ -313,3 +315,19 @@ Ruby 102 -> has Ruby 101's id as prereq id, so returns that
 
 If you did a has_one, it'll return the opposite instead!
 Unless you switch up the primary and foreign key...! 
+
+Remember, the first argument is the name of the method then the rest are 
+the options hash! Remember Ruby's hash into arguments rule?
+
+launchy gem -> pop open URL in a browser
+ctrl - T shortcut to search through project for files
+
+exists? method for ActiveRecord model classes
+
+Rails -> can add Proc to associations, like Proc.new { method }, 
+a shortcut for Proc.new is just ->, so -> { method }, works as well. 
+
+Look at how .where and such work in Rails, it's quite cool and convenient.
+Also, can write pure SQL using heredocs then
+sql = (<<-SQL) SELECT * FROM cats SQL 
+ActiveRecord::Base.connection.execute(sql)
