@@ -282,3 +282,34 @@ be searched for should be indexed
 
 With unique:true constraint, can also pass in array to have the uniqueness 
 of a combination fo values
+
+1.rails new <name> -G --database=postgresql 
+2.Add in 4 useful gems, bundle install
+3.rails db:create
+4.Create migrations -> rails g migration <name> -> remember constraints/indexes  
+5.Create models -> rails g model <name> (can add --migration=false) -> remember 
+  validations and associations!
+6.bundle exec annotate
+7.rails console
+
+Important deets to remember: validate presence of the OBJECT, not the key if 
+it's a belongs_to. Also, the optional: true tag is useful as well...
+
+list-style and line-height properties 
+font-size and vertical-align
+width: 100% to take up 100% of width of parent container
+
+bundle exec rails db:setup shorthand create, load, seed
+https://jacopretorius.net/2014/02/all-rails-db-rake-tasks-and-what-they-do.html
+
+https://code.visualstudio.com/shortcuts/keyboard-shortcuts-linux.pdf
+
+ActiveRecord association represents... 
+
+Think about how prerequisite works for the self reference.
+If you use a belongs_to, it'll give what's expected! 
+Ruby 101 -> has nil as prereq id, so returns nil 
+Ruby 102 -> has Ruby 101's id as prereq id, so returns that
+
+If you did a has_one, it'll return the opposite instead!
+Unless you switch up the primary and foreign key...! 
