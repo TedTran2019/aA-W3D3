@@ -6,10 +6,12 @@
 #  email      :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
+#  premium    :boolean          default(FALSE), not null
 #
 
 class User < ApplicationRecord
-  validates :email, presence: true, uniqueness: true
+  validates :email, :premium, presence: true
+  validates :email, uniqueness: true
   
   has_many :submitted_urls,
   foreign_key: :user_id, 
