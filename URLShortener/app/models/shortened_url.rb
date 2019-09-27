@@ -54,4 +54,12 @@ class ShortenedUrl < ApplicationRecord
   -> { distinct },
   through: :visits, 
   source: :user
+
+  has_many :taggings,
+  foreign_key: :url_id,
+  class_name: :Tagging
+
+  has_many :tag_topics,
+  through: :taggings,
+  source: :tag_topic
 end
