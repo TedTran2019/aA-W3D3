@@ -16,6 +16,17 @@ class ShortenedUrl < ApplicationRecord
   validate :no_spamming
   validate :nonpremium_max
 
+  def self.prune(n)
+    ShortenedUrl
+    .joins(:submitter)
+    .left_outer_joins(:visits)
+    .where("shortened_urls.created_at <= ? AND users.premium = false", n.minutes.ago)
+    .group("shortened_urls.id")
+    .having("COALESCE(MAX(visits.created_at), ?) <= ?", n.hours.ago, n.minutes.ago)
+    .select("shortened_urls.*")
+    .destroy_all
+  end
+
   def self.shorten(user, long_url)
     url = ShortenedUrl.new(:user_id => user.id, :long_url => long_url,
     :short_url => ShortenedUrl.random_code)
@@ -69,7 +80,8 @@ class ShortenedUrl < ApplicationRecord
   foreign_key: :user_id, 
   class_name: :User
 
-  has_many :visits
+  has_many :visits,
+  dependent: :destroy
 
   has_many :visitors, 
   -> { distinct },
@@ -78,7 +90,8 @@ class ShortenedUrl < ApplicationRecord
 
   has_many :taggings,
   foreign_key: :url_id,
-  class_name: :Tagging
+  class_name: :Tagging,
+  dependent: :destroy
 
   has_many :tag_topics,
   through: :taggings,
