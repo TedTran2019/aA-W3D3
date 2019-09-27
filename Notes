@@ -331,3 +331,62 @@ Look at how .where and such work in Rails, it's quite cool and convenient.
 Also, can write pure SQL using heredocs then
 sql = (<<-SQL) SELECT * FROM cats SQL 
 ActiveRecord::Base.connection.execute(sql)
+
+Rails.cache.clear to clear TMP files
+git rm --cached -r <to undo>
+
+#!/usr/bin/env ruby -> Shebang
+
+rails r bin/script, or I'm assuming you could put it anywhere....
+
+find vs find_by vs where
+
+Constraint for uniqueness of two things: add_index :table, [:thing1, :thing2], unique: true
+Validation: validates :thing1, uniqueness:  { scope: :thing2 }
+
+Apparently you can't join with outside associations (from other classes)
+
+  def popular_links 
+    links
+    .joins(:visits)
+    .group(:short_url)
+    .order("COUNT(visits.id) DESC")
+    .limit(5)
+    .select("COUNT(*) as num_likes, short_url")
+  end
+
+That was hell. Issues -> make sure to reload! and reset, or you won't know 
+if you're progressing correctly or not. 
+
+dependent: :destroy is hella useful for taking out associations that rely 
+on said thing
+
+associations -> table 
+table -> association
+What about associaton -> association or table -> table?
+Table -> Table is an obvious must, but what about 2 associations?
+
+Seems like you're still kinda confused about GROUP in SQL.
+SELECT("table_names.*") so the object pops out!
+
+I believe method chaining -> same order as regular SQL
+
+.destroy_all
+
+rake 
+1. rake -t -all to see all tasks
+2. invoke by calling <rake task_name>
+3. file ends in .rake, with a namespace same as the file name
+4. crontab to schedule tasks
+5. which rake to find full path
+
+Ex. of myrailsapp.rake file 
+namespace :myrailsapp do
+  desc "Purge stale entries from audits table"
+  task purge_audits: :environment do
+    puts "Purging old audits..."
+    Audit.purge
+  end
+end
+
+rake namespace:task_name

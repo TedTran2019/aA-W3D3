@@ -1056,3 +1056,8 @@ Migrating to AddPremiumToUsers (20190927022021)
   [1m[36mShortenedUrl Load (0.6ms)[0m  [1m[34mSELECT "shortened_urls".* FROM "shortened_urls"[0m
   [1m[36mShortenedUrl Load (0.5ms)[0m  [1m[34mSELECT "shortened_urls".* FROM "shortened_urls"[0m
   [1m[36mShortenedUrl Load (0.8ms)[0m  [1m[34mSELECT "shortened_urls".* FROM "shortened_urls"[0m
+  [1m[36mShortenedUrl Load (0.7ms)[0m  [1m[34mSELECT shortened_urls.* FROM "shortened_urls" INNER JOIN "users" ON "users"."id" = "shortened_urls"."user_id" LEFT OUTER JOIN "visits" ON "visits"."shortened_url_id" = "shortened_urls"."id" WHERE (shortened_urls.created_at <= '2019-09-27 04:33:42.836650' AND users.premium = false) GROUP BY shortened_urls.id HAVING (COALESCE(MAX(visits.created_at), '2019-09-26 18:43:42.853046') <= '2019-09-27 04:33:42.853061')[0m
+  ↳ app/models/shortened_url.rb:27:in `prune'
+  [1m[36mShortenedUrl Load (0.7ms)[0m  [1m[34mSELECT shortened_urls.* FROM "shortened_urls" INNER JOIN "users" ON "users"."id" = "shortened_urls"."user_id" LEFT OUTER JOIN "visits" ON "visits"."shortened_url_id" = "shortened_urls"."id" WHERE (shortened_urls.created_at <= '2019-09-27 04:33:53.713149' AND users.premium = false) GROUP BY shortened_urls.id HAVING (COALESCE(MAX(visits.created_at), '2019-09-26 18:43:53.729512') <= '2019-09-27 04:33:53.729526')[0m
+  ↳ app/models/shortened_url.rb:27:in `prune'
+  [1m[36mShortenedUrl Load (0.3ms)[0m  [1m[34mSELECT "shortened_urls".* FROM "shortened_urls"[0m
